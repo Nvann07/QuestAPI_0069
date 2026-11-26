@@ -43,3 +43,38 @@ fun HomeScreen(
         )
     }
 }
+
+@Composable
+fun HomeBody(
+    statusUiSiswa: StatusUiSiswa,
+    onSiswaClick: (Int) -> Unit,
+    retryAction: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+    ) {
+        when (statusUiSiswa) {
+            is StatusUiSiswa.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
+            is StatusUiSiswa.Success -> {
+                if (statusUiSiswa.siswa.isEmpty()) {
+                    Text(
+                        text = stringResource(R.string.deskripsi_no_iten),
+                        modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_medium))
+                    )
+                } else {
+                    DaftarSiswa(
+                        itemSiswa = statusUiSiswa.siswa,
+                        onSiswaClick = { onSiswaClick(it.id) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+            is StatusUiSiswa.Error -> ErrorScreen(
+                retryAction = retryAction,
+                modifier = modifier.fillMaxSize()
+            )
+        }
+    }
+}
